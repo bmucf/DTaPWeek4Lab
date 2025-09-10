@@ -17,6 +17,8 @@ public class EnemyOrbitBehavior : MonoBehaviour
     public float targetOrbitSpeed;
     private float angle = 0f; // Current angle in radians
 
+    public Vector3 localAxis = Vector3.right;
+
 
     private float temp;
 
@@ -60,6 +62,15 @@ public class EnemyOrbitBehavior : MonoBehaviour
             tempTarget = Vector3.Lerp(tempTarget, target.position, Time.deltaTime * targetOrbitSpeed);
 
         }
+
+        // Look at
+        Vector3 direction = target.position - transform.position;
+
+        // Build a rotation that rotates your chosen local axis to face the target
+        Quaternion rotation = Quaternion.FromToRotation(localAxis, direction.normalized);
+
+        // Apply it to the object
+        transform.rotation = rotation;
 
     }
 
