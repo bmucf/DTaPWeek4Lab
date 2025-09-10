@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -9,19 +10,21 @@ public class EnemyOrbitBehavior : MonoBehaviour
 {
     // The target at which the enemy will look and and rotate around
     public Transform target;
+    private Vector3 tempTarget;
 
     // Target radius
     public float targetOrbitRadius;
     public float targetOrbitSpeed;
     private float angle = 0f; // Current angle in radians
 
-    public float orbitRadius;
+
+    private float temp;
 
     private void Start()
-    {
-        transform.position = new Vector3(target.position.x, target.position.y + targetOrbitRadius);
-        orbitRadius = targetOrbitRadius;
-        
+    {   
+        tempTarget = target.position;
+        transform.position = new Vector3(tempTarget.x, tempTarget.y + targetOrbitRadius);
+        temp = targetOrbitSpeed;
     }
 
     void Update()
@@ -34,21 +37,32 @@ public class EnemyOrbitBehavior : MonoBehaviour
             angle -= Mathf.PI * 2f;
 
         // Calculate new position
-        float x = Mathf.Cos(angle) * orbitRadius;
-        float y = Mathf.Sin(angle) * orbitRadius;
+        float x = Mathf.Cos(angle) * targetOrbitRadius;
+        float y = Mathf.Sin(angle) * targetOrbitRadius;
 
         // Apply position relative to target
         transform.position = new Vector3(
-            target.position.x + x,
-            target.position.y + y
+            tempTarget.x + x,
+            tempTarget.y + y
         );
+
+        if (OrbitRadius() < 2f)
+        {
+
+            targetOrbitSpeed *= 3;
+        }
+        else
+            targetOrbitSpeed = temp;
+
+
+        if (OrbitRadius() < 2.5f)
+        {
+            tempTarget = Vector3.Lerp(tempTarget, target.position, Time.deltaTime * targetOrbitSpeed);
+
+        }
+
     }
 
-    // Orbit Logic (using Radians)
-    private void Orbit()
-    {
-       
-    }
 
     // Calculate distance between enemy and target
     private float OrbitRadius()
